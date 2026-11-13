@@ -1,0 +1,322 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-feature-settings: "tnum" 1;
+}
+
+body {
+  background-color: #0a0b0d;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.font-display {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-family: "Geist Mono", ui-monospace, monospace;
+}
+
+/* Card: a frosted white glass surface floating over the dark ground --
+   translucent, blurred, borderless. Depth comes from the blur and the
+   shadow alone, never a hairline edge. Text inside flips to the dark
+   scale below so it still reads against the light surface. */
+.panel-material {
+  background-color: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: none;
+  border-radius: 1.75rem;
+  box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Text role remap, scoped to the glass card: the light-on-dark scale
+   (ops-accent/ops-muted/slate-*) was tuned for the anthracite surface
+   these classes used to sit on, so inside a .panel-material it's
+   repointed to a dark-on-light scale instead. Status/vivid/chip colors
+   are untouched -- they're saturated enough to read on either ground. */
+.panel-material :is(.text-ops-accent, .text-slate-100, .text-slate-200, .text-slate-300) {
+  color: #14161b;
+}
+.panel-material :is(.text-ops-muted, .text-slate-400) {
+  color: #5b6471;
+}
+
+/* Chrome: the sidebar and mobile top bar. Translucent glass over black
+   (the loud palette's anchor hue) -- blurred and saturated so the
+   animated gradient behind the shell bleeds softly through at the
+   edges, instead of a flat opaque fill. Still flush against the
+   viewport edge (no radius, unlike a card). */
+.chrome-material {
+  background-color: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-style: solid;
+  border-width: 0;
+  border-color: #22252c;
+}
+
+/* Sheets that float above the page (dialogs, the nav drawer): the same
+   solid card surface, a stronger shadow for real separation, plus the
+   spring-in entrance. */
+.sheet-material {
+  background-color: #14161b;
+  border: 1px solid #22252c;
+  border-radius: 1.75rem;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* The nav drawer variant: flush against the screen's left edge, rounded
+   only on the edge that actually floats, and matched to the sidebar's
+   own translucent chrome rather than the neutral dialog surface above. */
+.sheet-material.drawer-sheet {
+  background-color: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: none;
+  border-left: none;
+  border-radius: 0 1.75rem 1.75rem 0;
+}
+
+/* Auth card (Login/Register): the loud palette's violet, translucent
+   over the animated gradient, pairing with (not copying) the sidebar's
+   black so the pre-auth screen reads as part of the same glass system. */
+.auth-material {
+  background-color: rgba(143, 0, 255, 0.6);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-radius: 1.75rem;
+  box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Vivid card: translucent glass -- blurred and saturated so the page's
+   own animated gradient glows softly through the card's edges -- in the
+   loud palette's own full-color fills (set via bg-loud-* with an
+   opacity suffix on each card), rather than a flat opaque block or the
+   old frosted-white glass panel. This class only carries the shared
+   shape, blur and depth. */
+.vivid-card {
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-radius: 1.75rem;
+  box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Brand-mark glitch: a heavy, bursty channel-split effect on the
+   "SentinelAI" wordmark, using the app's own loud palette (indigo/
+   magenta/lime) in place of literal RGB. The readable base layer is
+   static; two duplicate layers flash on, offset and clipped to a
+   horizontal band, each on its own timing so the split reads as
+   chaotic rather than one block moving. Mostly idle (a 4s loop, ~90%
+   of it at rest) with a dense, rapid burst every cycle -- "every few
+   seconds," not continuous. mix-blend-mode: screen lets the offset
+   colors combine over the base the way real channel splits do. */
+@media (prefers-reduced-motion: no-preference) {
+  .glitch-base {
+    animation: glitchShake 4s infinite;
+  }
+  .glitch-layer {
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    will-change: transform, clip-path, opacity;
+  }
+  .glitch-layer-indigo {
+    color: #4300ed;
+    animation: glitchIndigo 4s infinite;
+  }
+  .glitch-layer-magenta {
+    color: #ed0062;
+    animation: glitchMagenta 4s infinite;
+  }
+  .glitch-layer-lime {
+    color: #c5f700;
+    animation: glitchLime 4s infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glitch-layer {
+    opacity: 0;
+  }
+}
+
+@keyframes glitchShake {
+  0%, 90% { transform: translate(0, 0); }
+  90.5%, 91.5%, 92.5%, 93.5% { transform: translate(1px, 0); }
+  91%, 92%, 93%, 94% { transform: translate(-1px, 0); }
+  94.5%, 96.8%, 100% { transform: translate(0, 0); }
+  97.2% { transform: translate(1px, 0); }
+  97.6% { transform: translate(-1px, 0); }
+  98% { transform: translate(0, 0); }
+}
+
+@keyframes glitchIndigo {
+  0%, 90% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  90.5% { opacity: 0.85; clip-path: inset(8% 0 71% 0); transform: translate(-6px, 1px); }
+  91.5% { opacity: 0.85; clip-path: inset(44% 0 12% 0); transform: translate(5px, -2px); }
+  92.5% { opacity: 0.85; clip-path: inset(2% 0 85% 0); transform: translate(-3px, 2px); }
+  93.5% { opacity: 0.85; clip-path: inset(66% 0 4% 0); transform: translate(6px, 0); }
+  94.5%, 96.8% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  97.2% { opacity: 0.6; clip-path: inset(30% 0 40% 0); transform: translate(-4px, -1px); }
+  97.8%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+}
+
+@keyframes glitchMagenta {
+  0%, 90.2% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  90.7% { opacity: 0.85; clip-path: inset(55% 0 10% 0); transform: translate(6px, -1px); }
+  91.7% { opacity: 0.85; clip-path: inset(5% 0 70% 0); transform: translate(-5px, 2px); }
+  92.7% { opacity: 0.85; clip-path: inset(75% 0 2% 0); transform: translate(4px, -2px); }
+  93.7% { opacity: 0.85; clip-path: inset(15% 0 55% 0); transform: translate(-6px, 1px); }
+  94.7%, 97% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  97.4% { opacity: 0.55; clip-path: inset(40% 0 20% 0); transform: translate(5px, 1px); }
+  98%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+}
+
+@keyframes glitchLime {
+  0%, 90.4% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  90.9% { opacity: 0.7; clip-path: inset(20% 0 50% 0); transform: translate(3px, 2px) skewX(-6deg); }
+  91.9% { opacity: 0.7; clip-path: inset(60% 0 8% 0); transform: translate(-4px, -1px) skewX(4deg); }
+  92.9% { opacity: 0.7; clip-path: inset(0 0 90% 0); transform: translate(2px, -2px); }
+  93.9% { opacity: 0.7; clip-path: inset(80% 0 0 0); transform: translate(-3px, 1px); }
+  94.9%, 97.2% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  97.6% { opacity: 0.5; clip-path: inset(10% 0 60% 0); transform: translate(3px, 0); }
+  98.2%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+}
+
+/* Card-wide glitch (the auth card, not just the wordmark above it): the
+   same channel-split language stretched over the whole panel. Real
+   content (inputs, button, copy) stays fully usable -- it only shakes a
+   couple of pixels, reusing the wordmark's own glitchShake timing so the
+   two stay in sync -- while two pseudo-elements and one extra layer
+   flash a translucent indigo/magenta/lime slice over the card so it
+   never occludes text long enough to block reading. Same 4s cycle, same
+   brief burst window, same reduced-motion fallback. */
+@media (prefers-reduced-motion: no-preference) {
+  .card-glitch {
+    position: relative;
+    animation: glitchShake 4s infinite;
+  }
+  .card-glitch::before,
+  .card-glitch::after,
+  .card-glitch .card-glitch-lime {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .card-glitch::before {
+    background-color: #4300ed;
+    animation: cardGlitchIndigo 4s infinite;
+  }
+  .card-glitch::after {
+    background-color: #ed0062;
+    animation: cardGlitchMagenta 4s infinite;
+  }
+  .card-glitch .card-glitch-lime {
+    background-color: #c5f700;
+    animation: cardGlitchLime 4s infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-glitch::before,
+  .card-glitch::after,
+  .card-glitch .card-glitch-lime {
+    opacity: 0;
+  }
+}
+
+@keyframes cardGlitchIndigo {
+  0%, 90% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  90.5% { opacity: 0.32; clip-path: inset(4% 0 80% 0); transform: translate(-5px, 0); }
+  91.5% { opacity: 0.28; clip-path: inset(48% 0 10% 0); transform: translate(4px, 0); }
+  92.5% { opacity: 0.32; clip-path: inset(0 0 90% 0); transform: translate(-3px, 0); }
+  93.5% { opacity: 0.28; clip-path: inset(72% 0 0 0); transform: translate(5px, 0); }
+  94.5%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+}
+
+@keyframes cardGlitchMagenta {
+  0%, 90.2% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  90.7% { opacity: 0.32; clip-path: inset(58% 0 8% 0); transform: translate(5px, 0); }
+  91.7% { opacity: 0.28; clip-path: inset(6% 0 72% 0); transform: translate(-4px, 0); }
+  92.7% { opacity: 0.32; clip-path: inset(78% 0 0 0); transform: translate(4px, 0); }
+  93.7% { opacity: 0.28; clip-path: inset(14% 0 58% 0); transform: translate(-5px, 0); }
+  94.7%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+}
+
+@keyframes cardGlitchLime {
+  0%, 90.4% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  90.9% { opacity: 0.22; clip-path: inset(22% 0 48% 0); transform: translate(3px, 0); }
+  91.9% { opacity: 0.2; clip-path: inset(62% 0 6% 0); transform: translate(-3px, 0); }
+  92.9% { opacity: 0.22; clip-path: inset(0 0 92% 0); transform: translate(2px, 0); }
+  93.9%, 100% { opacity: 0; clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+}
+
+/* App footer: the same translucent black glass as the rest of the shell,
+   flush along the bottom of the content column rather than a floating
+   card. */
+.footer-material {
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* The one tactile baseline every control shares: a soft press, sprung
+   back on release -- never a snap. */
+.press {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.press:active {
+  transform: scale(0.97);
+}
+
+::selection {
+  background-color: #f4f1ea;
+  color: #0a0b0d;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0b0d;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #3d434d;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #565d69;
+}
+
+*:focus-visible {
+  outline: 2px solid #f4f1ea;
+  outline-offset: 2px;
+}
+
+/* Scoped, not a blanket kill: a continuous functional cue like the
+   loading spinner keeps running (forcing it to ~0 duration would make it
+   look frozen, destroying the very feedback it exists to give), and a
+   hover/focus color transition stays instant-but-real. Only the
+   decorative spring entrances and the tactile press lose their motion,
+   replaced with a brief fade so the state change -- a panel appearing, a
+   value updating -- still reads, just without movement. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pop,
+  .animate-sheetIn {
+    animation: fadeIn 0.15s ease-out !important;
+  }
+  .press {
+    transition: none;
+  }
+  .press:active {
+    transform: none;
+  }
+}

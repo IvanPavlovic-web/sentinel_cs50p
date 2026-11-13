@@ -1,0 +1,35 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+sqlalchemy>=2.0,<2.1
+psycopg2-binary==2.9.10
+alembic==1.14.0
+pydantic==2.10.4
+pydantic[email]==2.10.4
+pydantic-settings==2.7.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+celery==5.4.0
+# >=6.1.0: celery 5.4.0 pulls in a kombu whose redis transport refuses to
+# even start against redis-py 5.2.1 ("VersionMismatch: Redis transport
+# requires redis-py versions 6.1.0 or later") -- the celery worker crashed
+# on boot every time with the old pin, so no job (live camera or
+# uploaded-video) was ever actually picked up; they just sat "pending"
+# forever, which looked like "analysis never runs / never reports
+# anything", not merely "slow".
+redis==6.2.0
+opencv-python-headless==4.10.0.84
+ultralytics==8.3.49
+huggingface_hub==0.27.1
+numpy>=1.26,<3
+psutil==6.1.1
+pytest==8.3.4
+httpx==0.28.1
+python-multipart==0.0.20
+websockets==14.1
+python-dotenv==1.0.1
+# Pinned <4.1: passlib 1.7.4's bcrypt backend reads bcrypt.__about__.__version__
+# for version detection, an attribute bcrypt 4.1+ removed. passlib traps the
+# resulting AttributeError (hashing/verification still work either way), but
+# it logs a noisy warning on every single password check; 4.0.1 is the last
+# version with that attribute, so pinning here is silent and compatible.
+bcrypt==4.0.1

@@ -1,0 +1,31 @@
+# Backend build context is the whole repo root (see docker-compose.yml:
+# build.context: .), so without this, every `docker build` was hashing
+# and streaming the entire working tree -- .venv, .git, node_modules,
+# every skill/agent cache dir -- as build context on every single build,
+# even though only backend/, project.py and requirements.txt are ever
+# actually COPY'd. That made every rebuild take minutes just to transfer
+# context before the first real build step even started.
+.git/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+uploads/
+
+.agents/
+.claude/
+.impeccable/
+.taste-skill/
+docs/
+
+*.png
+*.log
+.env
+.env.local

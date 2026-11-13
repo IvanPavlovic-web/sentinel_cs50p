@@ -1,0 +1,431 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T00:00:00Z",
+  "title": "Design System: SentinelAI",
+  "extensions": {
+    "colorMeta": {
+      "ops-accent": {
+        "role": "primary",
+        "displayName": "Warm Off-White",
+        "canonical": "#f4f1ea",
+        "tonalRamp": [
+          "#1a1917",
+          "#2d2b27",
+          "#423f38",
+          "#6a6558",
+          "#938c7a",
+          "#bdb6a4",
+          "#ded8c9",
+          "#f4f1ea"
+        ]
+      },
+      "ops-bg": {
+        "role": "neutral",
+        "displayName": "Void Ground",
+        "canonical": "#0a0b0d",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0e1013",
+          "#14161b",
+          "#1b1e24",
+          "#262a31",
+          "#3d434d",
+          "#565d69",
+          "#8b93a1"
+        ]
+      },
+      "ops-panel": {
+        "role": "neutral",
+        "displayName": "Panel (material base)",
+        "canonical": "#14161b",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0e1013",
+          "#14161b",
+          "#1b1e24",
+          "#262a31",
+          "#3d434d",
+          "#565d69",
+          "#8b93a1"
+        ]
+      },
+      "ops-panel2": {
+        "role": "neutral",
+        "displayName": "Panel Recessed",
+        "canonical": "#0e1013",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#0e1013",
+          "#14161b",
+          "#1b1e24",
+          "#262a31",
+          "#3d434d",
+          "#565d69",
+          "#8b93a1"
+        ]
+      },
+      "ops-border": {
+        "role": "neutral",
+        "displayName": "Hairline Border",
+        "canonical": "#262a31",
+        "tonalRamp": [
+          "#14161b",
+          "#1b1e24",
+          "#262a31",
+          "#2f343c",
+          "#3d434d",
+          "#4e5560",
+          "#656d78",
+          "#8b93a1"
+        ]
+      },
+      "ops-muted": {
+        "role": "neutral",
+        "displayName": "Muted Text",
+        "canonical": "#9099a6",
+        "tonalRamp": [
+          "#262a31",
+          "#3d434d",
+          "#565d69",
+          "#6b7280",
+          "#8b93a1",
+          "#9099a6",
+          "#aab1bd",
+          "#c9cfd8"
+        ]
+      },
+      "status-critical": {
+        "role": "status",
+        "displayName": "Critical Red",
+        "canonical": "#ef4444",
+        "tonalRamp": [
+          "#450a0a",
+          "#7f1d1d",
+          "#991b1b",
+          "#b91c1c",
+          "#dc2626",
+          "#ef4444",
+          "#f87171",
+          "#fca5a5"
+        ]
+      },
+      "status-high": {
+        "role": "status",
+        "displayName": "High Amber-Orange",
+        "canonical": "#f97316",
+        "tonalRamp": [
+          "#431407",
+          "#7c2d12",
+          "#9a3412",
+          "#c2410c",
+          "#ea580c",
+          "#f97316",
+          "#fb923c",
+          "#fdba74"
+        ]
+      },
+      "status-medium": {
+        "role": "status",
+        "displayName": "Medium Amber-Yellow",
+        "canonical": "#f5c518",
+        "tonalRamp": [
+          "#3f2e02",
+          "#5c4303",
+          "#7a5a04",
+          "#a37907",
+          "#d4a10d",
+          "#f5c518",
+          "#f8d454",
+          "#fbe28a"
+        ]
+      },
+      "status-low": {
+        "role": "status",
+        "displayName": "Low Slate",
+        "canonical": "#8b93a1",
+        "tonalRamp": [
+          "#1e2126",
+          "#2c2f36",
+          "#3d434d",
+          "#565d69",
+          "#6b7280",
+          "#8b93a1",
+          "#aab1bd",
+          "#c9cfd8"
+        ]
+      },
+      "status-ok": {
+        "role": "status",
+        "displayName": "Ok Green",
+        "canonical": "#22c55e",
+        "tonalRamp": [
+          "#052e16",
+          "#14532d",
+          "#166534",
+          "#15803d",
+          "#16a34a",
+          "#22c55e",
+          "#4ade80",
+          "#86efac"
+        ]
+      },
+      "vivid-cyan": {
+        "role": "categorical",
+        "displayName": "Vivid Cyan",
+        "canonical": "#22D3EE",
+        "tonalRamp": [
+          "#22D3EE"
+        ]
+      },
+      "vivid-blue": {
+        "role": "categorical",
+        "displayName": "Vivid Blue",
+        "canonical": "#3c2cff",
+        "tonalRamp": [
+          "#3c2cff"
+        ]
+      },
+      "vivid-purple": {
+        "role": "categorical",
+        "displayName": "Vivid Purple",
+        "canonical": "#8B3DFF",
+        "tonalRamp": [
+          "#8B3DFF"
+        ]
+      },
+      "vivid-pink": {
+        "role": "categorical",
+        "displayName": "Vivid Pink",
+        "canonical": "#FF3DA5",
+        "tonalRamp": [
+          "#FF3DA5"
+        ]
+      },
+      "vivid-amber": {
+        "role": "categorical",
+        "displayName": "Vivid Amber",
+        "canonical": "#FFB800",
+        "tonalRamp": [
+          "#FFB800"
+        ]
+      },
+      "vivid-orange": {
+        "role": "categorical",
+        "displayName": "Vivid Orange",
+        "canonical": "#FF5A1F",
+        "tonalRamp": [
+          "#FF5A1F"
+        ]
+      },
+      "vivid-green": {
+        "role": "categorical",
+        "displayName": "Vivid Green",
+        "canonical": "#7CFF5B",
+        "tonalRamp": [
+          "#7CFF5B"
+        ]
+      },
+      "vivid-emerald": {
+        "role": "categorical",
+        "displayName": "Vivid Emerald",
+        "canonical": "#3BF08C",
+        "tonalRamp": [
+          "#3BF08C"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Geist Display",
+        "purpose": "Page headings, dialog titles, auth headlines - normal case, no heavy tracking."
+      },
+      "body": {
+        "displayName": "Geist Body",
+        "purpose": "Reading text, form labels, descriptive copy."
+      },
+      "label": {
+        "displayName": "Section Label",
+        "purpose": "Panel sub-headings, table column headers, stat-tile labels - normal case."
+      },
+      "mono": {
+        "displayName": "Tabular Mono",
+        "purpose": "Risk scores, timestamps, IDs, counts, clock - never prose."
+      }
+    },
+    "shadows": [
+      {
+        "name": "material",
+        "value": "0 1px 1px rgba(0,0,0,0.3), 0 10px 30px -12px rgba(0,0,0,0.5)",
+        "purpose": "Resting panel depth: a tight contact shadow plus a soft far falloff."
+      },
+      {
+        "name": "materialLg",
+        "value": "0 2px 2px rgba(0,0,0,0.35), 0 24px 48px -16px rgba(0,0,0,0.55)",
+        "purpose": "Larger panel/chrome depth."
+      },
+      {
+        "name": "sheet",
+        "value": "0 8px 16px -4px rgba(0,0,0,0.4), 0 32px 64px -24px rgba(0,0,0,0.6)",
+        "purpose": "A floating sheet (dialog, nav drawer) separating from the page."
+      }
+    ],
+    "motion": [
+      {
+        "name": "pop",
+        "value": "scale(0.96)->scale(1), opacity 0->1, 0.4s cubic-bezier(0.16,1,0.3,1)",
+        "purpose": "The spring settle: replays only when a live value actually changes (key-based re-trigger), never on every render. Smooth exponential ease-out, not a bounce."
+      },
+      {
+        "name": "sheetIn",
+        "value": "translateY(8px) scale(0.98)->translateY(0) scale(1), opacity 0->1, 0.4s cubic-bezier(0.16,1,0.3,1)",
+        "purpose": "A material sheet (dialog, nav drawer) entering the page."
+      },
+      {
+        "name": "press",
+        "value": "scale(1)->scale(0.97) on :active, 0.2s cubic-bezier(0.16,1,0.3,1)",
+        "purpose": "The one tactile baseline every control shares."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "High-contrast CTA (Sign in, Add Camera): off-white fill, void text, Geist semibold, normal case, with the shared press tactile feedback.",
+      "html": "<button class=\"ds-btn-primary\">Add Camera</button>",
+      "css": ".ds-btn-primary { background: #f4f1ea; color: #0a0b0d; font-family: \"Geist\", system-ui, sans-serif; font-weight: 600; border-radius: 0.75rem; padding: 10px 16px; font-size: 0.875rem; border: none; transition: background 0.15s, transform 0.2s cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { background: #c9c4b7; } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn-primary:focus-visible { outline: 2px solid #f4f1ea; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Material Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Translucent, blurred material panel with soft layered shadow - the base container for stat groups, tables, and charts. Replaces the prior world's flat 0-radius bordered panel.",
+      "html": "<div class=\"ds-panel\"><h2 class=\"ds-panel-label\">Cameras</h2><p>Panel content</p></div>",
+      "css": ".ds-panel { background: rgba(20,22,27,0.62); backdrop-filter: blur(24px) saturate(150%); border: 1px solid rgba(255,255,255,0.07); border-radius: 1.25rem; padding: 20px; box-shadow: 0 1px 1px rgba(0,0,0,0.3), 0 10px 30px -12px rgba(0,0,0,0.5); } .ds-panel-label { font-family: \"Geist\", system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; color: #e2e8f0; margin-bottom: 16px; }"
+    },
+    {
+      "name": "Sheet (Dialog / Drawer)",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "A floating material surface above the page: more opaque and more blurred than a resting panel, larger radius, stronger shadow, spring-in entrance, Escape-to-close and focus return.",
+      "html": "<div class=\"ds-sheet\" role=\"dialog\" aria-modal=\"true\">Dialog content</div>",
+      "css": ".ds-sheet { background: rgba(20,22,27,0.82); backdrop-filter: blur(32px) saturate(160%); border: 1px solid rgba(255,255,255,0.09); border-radius: 1.5rem; box-shadow: 0 8px 16px -4px rgba(0,0,0,0.4), 0 32px 64px -24px rgba(0,0,0,0.6); animation: ds-sheet-in 0.4s cubic-bezier(0.16,1,0.3,1); } @keyframes ds-sheet-in { 0% { transform: translateY(8px) scale(0.98); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }"
+    },
+    {
+      "name": "Stat Tile",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "Compact material stat tile with a soft blurred colored glow in the corner (not a hard top bar) and a spring-settle numeric value.",
+      "html": "<div class=\"ds-stat-tile\"><span class=\"ds-stat-glow\"></span><p class=\"ds-stat-label\">Open Incidents</p><p class=\"ds-stat-value\">12</p></div>",
+      "css": ".ds-stat-tile { position: relative; background: rgba(20,22,27,0.62); backdrop-filter: blur(24px) saturate(150%); border: 1px solid rgba(255,255,255,0.07); border-radius: 1.25rem; padding: 16px 20px; overflow: hidden; box-shadow: 0 1px 1px rgba(0,0,0,0.3), 0 10px 30px -12px rgba(0,0,0,0.5); } .ds-stat-glow { position: absolute; top: -24px; right: -24px; width: 80px; height: 80px; border-radius: 9999px; filter: blur(24px); opacity: 0.25; background: #ef4444; } .ds-stat-label { font-family: \"Geist\", system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; color: #9099a6; margin-bottom: 6px; } .ds-stat-value { font-family: \"Geist Mono\", ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 1.8rem; font-weight: 500; color: #ef4444; line-height: 1; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Recessed-panel text input used across auth and camera forms.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-email\">Email</label><input id=\"ds-email\" class=\"ds-input\" type=\"email\" />",
+      "css": ".ds-field-label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; } .ds-input { width: 100%; background: #0e1013; border: 1px solid #262a31; border-radius: 0.75rem; padding: 10px 12px; font-size: 0.875rem; color: #f4f1ea; transition: border-color 0.15s; } .ds-input:focus { outline: none; border-color: #f4f1ea; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Priority/status chip - color is entirely driven by the underlying severity value, never decorative. Normal case (capitalize), not uppercase.",
+      "html": "<span class=\"ds-pill ds-pill-high\">High</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; font-family: \"Geist\", system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; text-transform: capitalize; padding: 2px 8px; border-radius: 9999px; border: 1px solid; } .ds-pill-high { color: #f97316; border-color: rgba(249,115,22,0.4); background: rgba(249,115,22,0.1); }"
+    },
+    {
+      "name": "Sidebar Nav Item",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Rounded-pill nav item; active state is a solid off-white filled block, never a colored border accent.",
+      "html": "<a class=\"ds-nav-item ds-nav-item-active\">Dashboard</a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 1rem; font-family: \"Geist\", system-ui, sans-serif; font-size: 0.95rem; font-weight: 500; color: #94a3b8; transition: background 0.15s, color 0.15s; } .ds-nav-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; } .ds-nav-item-active { background: #f4f1ea; color: #0a0b0d; }"
+    },
+    {
+      "name": "FlipValue (Spring Settle)",
+      "kind": "custom",
+      "refersTo": "pop",
+      "description": "The system's signature motion device: a live value re-keys on real change and plays a soft scale+fade settle, reused on every live-updating number/status across the app. Smooth exponential ease-out, never a bounce/elastic curve.",
+      "html": "<span class=\"ds-pop\">4.7</span>",
+      "css": "@keyframes ds-pop { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } } .ds-pop { display: inline-block; animation: ds-pop 0.4s cubic-bezier(0.16,1,0.3,1); font-family: \"Geist Mono\", ui-monospace, monospace; font-variant-numeric: tabular-nums; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Calm Material",
+    "overview": "SentinelAI reads as a considered, physical operating surface - Apple's own system materiality (translucent layered panels, generous space, soft deep shadow, a natural spring settle) fused with the product's existing Risk severity semantics, not Apple's brand, logo, or screens. The ground stays dark (the honest choice for a console watched in operations rooms and at night, not a style pick), but panels are translucent material over the ground with soft layered shadow and large consistent corner radii, replacing the prior world's flat fills with only a hairline border for separation. One calm, neutral grotesk (Geist) carries every text role at every weight - no condensed display face, no uppercase tracked labels; hierarchy comes from size, weight, and space. Geist Mono stays reserved for genuinely tabular data. State color (the existing reserved severity ramp) is unchanged across all three visual worlds this project has had.\n\nThis is the third visual world this project has carried. The original black/white/gray console and a split-flap \"Live Board\" world both shipped, were polished and audited, and were explicitly superseded by later redesign briefs - both now exist only as evidence/anti-reference.\n\nThe system's reusable signature is the spring settle: a live-updating value re-keys and plays a soft scale-and-fade pop whenever its data actually changes, and a material sheet (a dialog, the mobile nav drawer) enters with the same calm settle rather than snapping into place. Every control shares one tactile baseline, a gentle press-and-release, reusing the same smooth exponential easing - never an elastic/bounce curve, which reads as dated rather than physical.",
+    "keyCharacteristics": [
+      "Dark anthracite ground; panels are translucent, blurred material with soft layered shadow, never a flat fill-plus-hairline.",
+      "One calm grotesk (Geist) for every text role, no condensed caps, no heavy tracking; monospace reserved strictly for tabular data.",
+      "Large, consistent corner radii (1.25rem panels, 1.5rem sheets, 0.75rem controls) replace the prior world's flat 0px board segments.",
+      "State color (red/amber/yellow/slate/green) appears only on real severity or status, never as decoration - unchanged across all three visual worlds.",
+      "The spring settle plus the shared press tactile baseline are the one motion language, both on a smooth exponential ease-out, never a bounce."
+    ],
+    "rules": [
+      {
+        "name": "The Material Rule",
+        "body": "A panel, sheet, or chrome surface is translucent + blurred + shadowed; it is never a flat opaque fill with only a hairline border for separation - the deliberate inverse of the prior world's Flat Ground Rule.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Reserved State Rule",
+        "body": "Status colors (status-critical/high/medium/low/ok) render only on a real severity, priority, or connection state value - never as a page accent, chart decoration, or brand color.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Palette Rule",
+        "body": "Every color reference, including raw hex passed to SVG/Recharts props, resolves to a documented token; a zone dot, chart line, or draw-preview outline never invents its own one-off color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Accessible Muted Text Rule",
+        "body": "Secondary/de-emphasized text always resolves to ops-muted (#9099a6), never Tailwind slate-500/slate-600, both under 4.5:1 on this anthracite palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The No-Caps Rule",
+        "body": "No text role uses uppercase or heavy letter-tracking; hierarchy is carried by size, weight, and space. Badges use capitalize on the underlying value instead.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular-Only Mono Rule",
+        "body": "Monospace is reserved for genuinely measured/tabular values (scores, timestamps, counts, IDs). It is never used for prose, labels, or decoration.",
+        "section": "typography"
+      },
+      {
+        "name": "The Categorical Color Rule",
+        "body": "vivid.* colors distinguish categories (object class, camera identity) with no inherent meaning ranking; they never substitute for or mix with the reserved severity ramp.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do build every panel/sheet/chrome surface as translucent + blurred + shadowed material (The Material Rule).",
+      "Do reserve status-critical/high/medium/low/ok strictly for real severity, priority, or connection-state values (The Reserved State Rule).",
+      "Do keep every text role in Geist, normal case, no heavy tracking (The No-Caps Rule).",
+      "Do route every live-updating value through FlipValue (animate-pop) and every sheet/drawer through animate-sheetIn, both on the shared smooth exponential easing.",
+      "Do give a dialog/drawer Escape-to-close, initial focus on open, and focus returned to the trigger on close.",
+      "Do use ops-muted (never slate-500/slate-600) for secondary text on this palette (The Accessible Muted Text Rule)."
+    ],
+    "donts": [
+      "Don't fall back to a flat opaque panel with just a hairline border - that is the prior world's rule, deliberately overturned here.",
+      "Don't use an elastic/bounce easing curve (overshoot past 1.0); real decelerating motion doesn't wobble.",
+      "Don't reach for a condensed display face, uppercase labels, or heavy letter-tracking anywhere in this world.",
+      "Don't use Inter, or any purple/gradient accent, or invent a one-off hex color outside the documented tokens (The One Palette Rule).",
+      "Don't apply a blanket prefers-reduced-motion kill to every animation/transition; a continuous functional cue (a loading spinner) needs to keep running.",
+      "Don't reach for a unicode glyph or emoji as an icon substitute; use the system's own mono-tag/label vocabulary or a real drawn icon.",
+      "Don't apply vivid.* (cyan/blue/purple/pink/amber/orange/green/emerald) to a severity, priority, or status value -- it is purely categorical (object class, camera), never meaning-bearing."
+    ]
+  }
+}

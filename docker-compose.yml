@@ -1,0 +1,140 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sentinel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sentinel}
+      POSTGRES_DB: ${POSTGRES_DB:-sentinel}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sentinel}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg2://sentinel:sentinel@postgres:5432/sentinel}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/1}
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-0}
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-20}
+      DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-40}
+    volumes:
+      - uploads_data:/app/uploads
+      - model_cache:/root/.cache
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # --limit-max-requests/--timeout-keep-alive raised beyond uvicorn's
+    # defaults so a single large-file upload request is never dropped early;
+    # uvicorn itself has no request body size ceiling.
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --timeout-keep-alive 3600 --workers ${UVICORN_WORKERS:-2}"
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg2://sentinel:sentinel@postgres:5432/sentinel}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/1}
+      UPLOAD_DIR: /app/uploads
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-20}
+      DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-40}
+    volumes:
+      - uploads_data:/app/uploads
+      - model_cache:/root/.cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    # --pool=threads (not the default "prefork") is required here: each
+    # video-processing task itself spawns a ProcessPoolExecutor to
+    # parallelize frame/inference work across chunks, and CPython refuses
+    # to let a daemonic process (which is what prefork pool workers are)
+    # spawn children of its own, and that combination fails immediately with
+    # "daemonic processes are not allowed to have children". Threads don't
+    # have that restriction. (--max-tasks-per-child is prefork-only and
+    # dropped accordingly; worker memory is bounded by each task's own
+    # ProcessPoolExecutor exiting its subprocesses when done.)
+    command: >
+      celery -A app.workers.celery_app worker --loglevel=info --pool=threads
+      --concurrency=${CELERY_WORKER_CONCURRENCY:-8}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+        VITE_WS_BASE_URL: ${VITE_WS_BASE_URL:-ws://localhost:8000}
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  # Production-grade entrypoint: terminates client connections with an
+  # explicitly unlimited request body size and long read/send timeouts, so
+  # multi-gigabyte footage uploads and long-lived WebSocket connections are
+  # never silently capped by a reverse proxy default. Optional for local
+  # dev (hit backend/frontend ports directly instead), but this is the
+  # service a real deployment should sit behind.
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  postgres_data:
+  uploads_data:
+  # Caches downloaded model weights (ultralytics COCO weights, and the
+  # Hugging Face weapon-detection model -- see backend/app/workers/
+  # detection.py) across container restarts, so they aren't re-fetched
+  # from the network every time.
+  model_cache:

@@ -1,0 +1,64 @@
+from __future__ import annotations
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.core.security import get_current_user
+from app.db.base import get_db
+from app.schemas.video import ProcessingJobRead
+from app.services import job_service
+
+router = APIRouter(prefix="/api/jobs", tags=["jobs"])
+
+
+@router.get("/{job_id}", response_model=ProcessingJobRead)
+def get_job(job_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    return job_service.get_job(db, job_id)
+
+
+@router.get("/{job_id}/detections")
+def get_job_detections(job_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """What the pipeline actually found in the footage for this job: object
+    classes and counts, and per-track detail, independent of whether any
+    zone/rule triggered an incident. Safe to poll while a job is still
+    processing; rows are written incrementally."""
+    return job_service.get_job_detections(db, job_id)
+
+
+@router.get("/{job_id}/boxes")
+def get_job_boxes(job_id: int, after_id: int = 0, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Per-frame detection boxes for this job, oldest first, for the Video
+    Detail page's live overlay to draw directly on top of the raw video
+    while it plays. Safe to poll while a job is still processing; rows
+    are written incrementally, same as /detections and /events."""
+    return job_service.get_job_boxes(db, job_id, after_id=after_id)
+
+
+@router.get("/{job_id}/events")
+def get_job_events(job_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Full live-activity narration log for this job, oldest first: what
+    the Video Detail page's activity panel replays for a completed job.
+    Safe to call mid-processing too; rows are written incrementally."""
+    return job_service.get_job_events(db, job_id)
+
+
+@router.get("/{job_id}/metrics")
+def get_job_metrics(job_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    metrics = job_service.get_job_metrics(db, job_id)
+    return [
+        {
+            "id": m.id,
+            "total_frames": m.total_frames,
+            "processed_frames": m.processed_frames,
+            "duration_seconds": m.duration_seconds,
+            "processing_fps": m.processing_fps,
+            "avg_latency_ms": m.avg_latency_ms,
+            "p95_latency_ms": m.p95_latency_ms,
+            "avg_cpu_percent": m.avg_cpu_percent,
+            "avg_ram_mb": m.avg_ram_mb,
+            "queue_wait_seconds": m.queue_wait_seconds,
+            "incident_count": m.incident_count,
+            "created_at": m.created_at.isoformat(),
+        }
+        for m in metrics
+    ]
