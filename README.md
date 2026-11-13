@@ -1,7 +1,7 @@
 # SentinelAI: Edge Video Intelligence & Incident Detection Platform
 
 **CS50P Final Project** by Ivan Pavlović
-**CS50 demo video:** _[PLACEHOLDER: add your CS50 submission video URL here]_
+**CS50 demo video:** [Watch the SentinelAI demonstration](https://youtu.be/DqECToa1PR0)
 
 A self-hostable video-intelligence platform with two ways in: connect a
 live camera (any RTSP source, including most home IP cameras) for
@@ -99,16 +99,16 @@ questions:
 
 ## Technology stack
 
-| Layer | Technologies |
-|---|---|
-| Backend | Python 3.12, FastAPI, SQLAlchemy 2.0, Alembic, Pydantic v2 / pydantic-settings |
-| Auth | JWT (access + refresh), `passlib[bcrypt]`, per-route RBAC dependencies |
-| Datastore / queue | PostgreSQL 16, Redis 7 |
-| Background processing | Celery (Redis broker + result backend), models loaded once per worker |
-| Computer vision | OpenCV (headless), Ultralytics YOLO11 (CPU) + a dedicated weapon-detection model, NumPy, `psutil` |
-| Testing | pytest, httpx |
-| Frontend | React 18, Vite, TypeScript, Tailwind CSS, React Router, TanStack Query, Recharts |
-| Infrastructure | Docker, Docker Compose, named volumes, health checks |
+| Layer                 | Technologies                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| Backend               | Python 3.12, FastAPI, SQLAlchemy 2.0, Alembic, Pydantic v2 / pydantic-settings                    |
+| Auth                  | JWT (access + refresh), `passlib[bcrypt]`, per-route RBAC dependencies                            |
+| Datastore / queue     | PostgreSQL 16, Redis 7                                                                            |
+| Background processing | Celery (Redis broker + result backend), models loaded once per worker                             |
+| Computer vision       | OpenCV (headless), Ultralytics YOLO11 (CPU) + a dedicated weapon-detection model, NumPy, `psutil` |
+| Testing               | pytest, httpx                                                                                     |
+| Frontend              | React 18, Vite, TypeScript, Tailwind CSS, React Router, TanStack Query, Recharts                  |
+| Infrastructure        | Docker, Docker Compose, named volumes, health checks                                              |
 
 ## Architecture
 
@@ -155,7 +155,7 @@ source of truth.
 ## Video processing pipeline, step by step
 
 1. A user with the `analyst` or `admin` role uploads a video through the
-   *Video Library* page, or directly via `POST /api/videos/upload`.
+   _Video Library_ page, or directly via `POST /api/videos/upload`.
 2. The backend validates the file extension/MIME type, generates a safe
    filename (UUID-based), stores it under `uploads/`, creates a
    `video_sources` row and a `processing_jobs` row (status `queued`), and
@@ -284,13 +284,13 @@ raw_risk      = 100 × (0.35·Z + 0.25·D + 0.20·M + 0.10·T + 0.10·C)
 smoothed_risk = alpha × raw_risk + (1 − alpha) × previous_risk     (alpha = 0.45)
 ```
 
-| Component | Meaning | Formula |
-|---|---|---|
-| **Z**: zone severity | 0 outside any zone | `low/medium/high/critical → 0.25/0.50/0.75/1.00` |
-| **D**: dwell score | time spent in the zone vs. the rule's minimum | `min(1, dwell_seconds / minimum_dwell_seconds)` |
-| **M**: motion anomaly | direction reversals and sudden speed bursts | see `calculate_motion_anomaly()` |
-| **T**: temporal score | outside business hours / `after_hours_only` rule | `1.0` or `0.0` |
-| **C**: confidence persistence | how consistently high-confidence recent detections are | derived from the last up-to-5 detections |
+| Component                     | Meaning                                                | Formula                                          |
+| ----------------------------- | ------------------------------------------------------ | ------------------------------------------------ |
+| **Z**: zone severity          | 0 outside any zone                                     | `low/medium/high/critical → 0.25/0.50/0.75/1.00` |
+| **D**: dwell score            | time spent in the zone vs. the rule's minimum          | `min(1, dwell_seconds / minimum_dwell_seconds)`  |
+| **M**: motion anomaly         | direction reversals and sudden speed bursts            | see `calculate_motion_anomaly()`                 |
+| **T**: temporal score         | outside business hours / `after_hours_only` rule       | `1.0` or `0.0`                                   |
+| **C**: confidence persistence | how consistently high-confidence recent detections are | derived from the last up-to-5 detections         |
 
 `calculate_motion_anomaly()` looks at consecutive velocity vectors for two
 signals: a **direction reversal** (the cosine of the angle between two
@@ -307,9 +307,9 @@ same track/rule pair until the score has stayed below `threshold − 20` for
 
 Final priority is derived from the smoothed score: `0–39 low`, `40–59
 medium`, `60–79 high`, `80–100 critical`. Every incident also gets a
-human-readable explanation, e.g.: *"Person track #14 entered the High
+human-readable explanation, e.g.: _"Person track #14 entered the High
 Security Warehouse zone, remained for 22 seconds, showed two direction
-reversals, and reached a Risk score of 84.3."*
+reversals, and reached a Risk score of 84.3."_
 
 The algorithm is fully unit tested: `test_project.py` contains 17 pytest
 tests covering boundary conditions, invalid inputs, hysteresis behaviour,
@@ -337,23 +337,23 @@ The PostgreSQL schema is defined through SQLAlchemy 2.0 models
 foreign keys, indexes on commonly filtered columns, and UTC timestamps
 throughout.
 
-| Table | Purpose | Notable fields |
-|---|---|---|
-| `users` | Accounts, roles, hashed passwords | `email`, `role` (admin/analyst/viewer), `hashed_password`, `is_active` |
-| `refresh_tokens` | Revocable refresh tokens | `user_id`, `token_hash`, `expires_at`, `revoked_at` |
-| `audit_logs` | Trail of important actions | `user_id`, `action`, `resource_type`, `resource_id`, `details` |
-| `cameras` | Camera registry (live RTSP sources) | `name`, `location`, `rtsp_url`, `owner_id`, `is_active` |
-| `video_sources` | Uploaded video files | `original_filename`, `stored_filename`, `duration_seconds`, `fps`, `width`, `height` |
-| `processing_jobs` | One analysis run, either an uploaded video or a live-camera session | `video_source_id` or `camera_id` (exactly one set), `is_live`, `stop_requested`, `status`, `progress_percent` |
-| `detection_models` | Registered detection models | `name`, `version`, `weights_path`, `is_stub` |
-| `zones` | Polygon security zones per camera | `severity`, `polygon_json` (normalized `[x, y]` points), `minimum_dwell_seconds` |
-| `rules` | Rules scoped to a zone | `object_classes`, `after_hours_only`, `risk_threshold`, `consecutive_required` |
-| `tracked_objects` | One track within one processing job | `track_number`, `object_class`, `dominant_color`, `first_seen_at`, `last_seen_at`, `final_risk_score` |
-| `object_observations` | Every single observation of a track | `frame_number`, `centroid_x/y`, `bbox_x1/y1/x2/y2`, `confidence`, `zone_id`, `risk_score` |
-| `activity_events` | Live narration log entries | `event_type` (sighting/movement/anomaly/escalation/weapon/status), `severity`, `description`, `risk_score` |
-| `incidents` | Created incidents | `risk_score`, `status`, `priority`, `summary`, `resolution_notes`, `resolved_by/at` |
-| `incident_evidence` | Annotated evidence frames | `frame_path`, `frame_number`, `timestamp_seconds` |
-| `performance_metrics` | Per-job performance data | `processing_fps`, `avg_latency_ms`, `p95_latency_ms`, `avg_cpu_percent`, `avg_ram_mb`, `queue_wait_seconds` |
+| Table                 | Purpose                                                             | Notable fields                                                                                                |
+| --------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `users`               | Accounts, roles, hashed passwords                                   | `email`, `role` (admin/analyst/viewer), `hashed_password`, `is_active`                                        |
+| `refresh_tokens`      | Revocable refresh tokens                                            | `user_id`, `token_hash`, `expires_at`, `revoked_at`                                                           |
+| `audit_logs`          | Trail of important actions                                          | `user_id`, `action`, `resource_type`, `resource_id`, `details`                                                |
+| `cameras`             | Camera registry (live RTSP sources)                                 | `name`, `location`, `rtsp_url`, `owner_id`, `is_active`                                                       |
+| `video_sources`       | Uploaded video files                                                | `original_filename`, `stored_filename`, `duration_seconds`, `fps`, `width`, `height`                          |
+| `processing_jobs`     | One analysis run, either an uploaded video or a live-camera session | `video_source_id` or `camera_id` (exactly one set), `is_live`, `stop_requested`, `status`, `progress_percent` |
+| `detection_models`    | Registered detection models                                         | `name`, `version`, `weights_path`, `is_stub`                                                                  |
+| `zones`               | Polygon security zones per camera                                   | `severity`, `polygon_json` (normalized `[x, y]` points), `minimum_dwell_seconds`                              |
+| `rules`               | Rules scoped to a zone                                              | `object_classes`, `after_hours_only`, `risk_threshold`, `consecutive_required`                                |
+| `tracked_objects`     | One track within one processing job                                 | `track_number`, `object_class`, `dominant_color`, `first_seen_at`, `last_seen_at`, `final_risk_score`         |
+| `object_observations` | Every single observation of a track                                 | `frame_number`, `centroid_x/y`, `bbox_x1/y1/x2/y2`, `confidence`, `zone_id`, `risk_score`                     |
+| `activity_events`     | Live narration log entries                                          | `event_type` (sighting/movement/anomaly/escalation/weapon/status), `severity`, `description`, `risk_score`    |
+| `incidents`           | Created incidents                                                   | `risk_score`, `status`, `priority`, `summary`, `resolution_notes`, `resolved_by/at`                           |
+| `incident_evidence`   | Annotated evidence frames                                           | `frame_path`, `frame_number`, `timestamp_seconds`                                                             |
+| `performance_metrics` | Per-job performance data                                            | `processing_fps`, `avg_latency_ms`, `p95_latency_ms`, `avg_cpu_percent`, `avg_ram_mb`, `queue_wait_seconds`   |
 
 ## Authentication & RBAC
 
@@ -362,11 +362,11 @@ Login returns a short-lived JWT access token and a rotating refresh token
 that is persisted (and revocable) in `refresh_tokens`, so logout is a real
 server-side action, not just discarding a token on the client.
 
-| Role | Permissions |
-|---|---|
-| `admin` | Full control: users, all cameras/zones/rules, all incidents, audit log |
-| `analyst` | Upload video, create cameras/zones/rules, resolve incidents |
-| `viewer` | Read-only: video, processing progress, incidents, reports |
+| Role      | Permissions                                                            |
+| --------- | ---------------------------------------------------------------------- |
+| `admin`   | Full control: users, all cameras/zones/rules, all incidents, audit log |
+| `analyst` | Upload video, create cameras/zones/rules, resolve incidents            |
+| `viewer`  | Read-only: video, processing progress, incidents, reports              |
 
 Every protected route uses a `require_roles(...)` FastAPI dependency.
 Important actions: login, upload, zone creation, rule changes, incident
@@ -504,40 +504,40 @@ attributes extracted per detection (`app/workers/visual_attributes.py`):
 - **Color**: the dominant color of each bounding-box crop, classified from
   the median HSV of a downsampled patch (robust to lighting/shadow; far
   cheaper than clustering). A track's reported color is the mode across its
-  whole history, not a single noisy frame. *"A red car..."*
+  whole history, not a single noisy frame. _"A red car..."_
 - **Position**: frame-relative thirds, the way a person points at a
-  screen: *"...in the right side of the frame"*, *"...in the top-left of
-  the frame"*, *"...in the center of the frame"*.
+  screen: _"...in the right side of the frame"_, _"...in the top-left of
+  the frame"_, _"...in the center of the frame"_.
 - **Movement**: direction and qualitative speed from the track's recent
-  centroid history: *"moving quickly left"*, *"stationary"*, *"moving
-  slowly downward, toward the bottom of the frame"*.
+  centroid history: _"moving quickly left"_, _"stationary"_, _"moving
+  slowly downward, toward the bottom of the frame"_.
 
 One `ActivityEventGenerator` instance runs per job, fed every observation
 in temporal order, and emits a new line only when something is actually
 worth saying:
 
 - **Sighting**: the very first observation of a new track, a full scene
-  description: *"A red car (#3) appeared in the right side of the frame."*
+  description: _"A red car (#3) appeared in the right side of the frame."_
 - **Movement**: only on an actual change of direction (not every tick, or
-  this would be as noisy as raw coordinates): *"A red car (#3) is now
-  moving quickly left in the center of the frame."*
+  this would be as noisy as raw coordinates): _"A red car (#3) is now
+  moving quickly left in the center of the frame."_
 - **Anomaly**: the first observation where a track's motion-anomaly score
   (direction reversals / speed bursts, from `calculate_motion_anomaly`)
-  crosses `ANOMALY_EVENT_THRESHOLD` (default 0.5): *"A gray person (#2) is
+  crosses `ANOMALY_EVENT_THRESHOLD` (default 0.5): _"A gray person (#2) is
   moving erratically in the left side of the frame (anomaly score 1.00):
-  possible suspicious behavior."*
+  possible suspicious behavior."_
 - **Escalation**: whenever a track's Risk severity bucket increases
-  (low → medium → high → critical): *"...risk escalated to MEDIUM
-  (Risk 40.1), moving right in the center of the frame."*
+  (low → medium → high → critical): _"...risk escalated to MEDIUM
+  (Risk 40.1), moving right in the center of the frame."_
 - **Weapon**: any detection whose class name matches `WEAPON_CLASS_NAMES`
   (case-insensitive; default
   `knife,gun,pistol,rifle,weapon,firearm,grenade,missile`), always
-  `critical` severity, flagged once per track: *"Weapon-like object
-  detected on track #4 (knife)."*
+  `critical` severity, flagged once per track: _"Weapon-like object
+  detected on track #4 (knife)."_
 - **Status**: a heartbeat line at most every `EVENT_HEARTBEAT_SECONDS`
   (default 3s) per track when nothing else fired, so the log reads as a
-  continuous narration rather than only alerts: *"...continues moving
-  normally"* at low severity, *"...remains at elevated risk"* otherwise.
+  continuous narration rather than only alerts: _"...continues moving
+  normally"_ at low severity, _"...remains at elevated risk"_ otherwise.
 
 The same per-track dominant color is also persisted on `tracked_objects`
 (shown in the Video Detail per-track table) and in the live overlay's
@@ -551,9 +551,9 @@ track ID, dominant clothing color, on-screen position, and movement
 direction, scored and narrated independently (`app/algorithms/tracker.py`'s
 IoU+centroid matching keeps IDs stable across frames). When several people
 are visible at the same time, the first sighting of each one also states
-the concurrent count, e.g. *"A red person (#3) appeared in the left side
+the concurrent count, e.g. _"A red person (#3) appeared in the left side
 of the frame. 3 people are in view at once, each tracked separately by ID,
-color, and position."* -- so the log and the per-track table both read as
+color, and position."_ -- so the log and the per-track table both read as
 distinct individuals, not one merged blob.
 
 Every event is persisted with its severity, timestamp, and the risk score
@@ -626,23 +626,23 @@ sentinelai/
 
 All variables live in `.env.example` (copy to `.env`). Key ones:
 
-| Variable | Purpose | Default |
-|---|---|---|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql+psycopg2://sentinel:sentinel@postgres:5432/sentinel` |
-| `JWT_SECRET` | Signing key for JWTs: **change in production** |: |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` / `REFRESH_TOKEN_EXPIRE_DAYS` | Token lifetimes | `30` / `7` |
-| `REDIS_URL`, `CELERY_BROKER_URL`, `CELERY_RESULT_BACKEND` | Redis connections for Celery | `redis://redis:6379/0,1` |
-| `CORS_ORIGINS` | Allowed frontend origins (`http://localhost` with no port is required for the nginx entrypoint on `:80` -- see "Production hardening") | `http://localhost:5173,http://localhost:3000,http://localhost` |
-| `UPLOAD_DIR`, `MAX_UPLOAD_SIZE_MB`, `ALLOWED_VIDEO_EXTENSIONS` | Upload validation: `MAX_UPLOAD_SIZE_MB=0` means unlimited | `/app/uploads`, `0`, `.mp4,.avi,.mov,.mkv,.ts,.mxf,.webm` |
-| `DB_POOL_SIZE`, `DB_MAX_OVERFLOW`, `DB_POOL_TIMEOUT_SECONDS`, `DB_POOL_RECYCLE_SECONDS` | PostgreSQL connection pool sizing | `20`, `40`, `30`, `1800` |
-| `CELERY_WORKER_CONCURRENCY` | Parallel worker threads per `celery_worker` container | `8` |
-| `CELERY_TASK_SOFT_TIME_LIMIT_SECONDS` / `CELERY_TASK_TIME_LIMIT_SECONDS` | Ceiling for a single video-processing job | `21600` (6h) / `23400` (6.5h) |
-| `UVICORN_WORKERS` | API process count (separate from Celery concurrency) | `2` |
-| `FRAME_SAMPLE_RATE` | Analyze every Nth frame | `5` |
-| `LIVE_SESSION_MAX_SECONDS` | Max length of one live-camera task invocation before re-queuing | `300` |
-| `YOLO_MODEL_PATH` | YOLO weights (the job fails cleanly if these can't be loaded -- no synthetic fallback) | `yolo11m.pt` |
-| `INCIDENT_RISK_THRESHOLD`, `INCIDENT_CONSECUTIVE_REQUIRED` | Default rule thresholds | `70.0`, `3` |
-| `VITE_API_BASE_URL`, `VITE_WS_BASE_URL` | Frontend → backend endpoints | `http://localhost:8000`, `ws://localhost:8000` |
+| Variable                                                                                | Purpose                                                                                                                                | Default                                                          |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `DATABASE_URL`                                                                          | PostgreSQL connection string                                                                                                           | `postgresql+psycopg2://sentinel:sentinel@postgres:5432/sentinel` |
+| `JWT_SECRET`                                                                            | Signing key for JWTs: **change in production**                                                                                         | :                                                                |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` / `REFRESH_TOKEN_EXPIRE_DAYS`                             | Token lifetimes                                                                                                                        | `30` / `7`                                                       |
+| `REDIS_URL`, `CELERY_BROKER_URL`, `CELERY_RESULT_BACKEND`                               | Redis connections for Celery                                                                                                           | `redis://redis:6379/0,1`                                         |
+| `CORS_ORIGINS`                                                                          | Allowed frontend origins (`http://localhost` with no port is required for the nginx entrypoint on `:80` -- see "Production hardening") | `http://localhost:5173,http://localhost:3000,http://localhost`   |
+| `UPLOAD_DIR`, `MAX_UPLOAD_SIZE_MB`, `ALLOWED_VIDEO_EXTENSIONS`                          | Upload validation: `MAX_UPLOAD_SIZE_MB=0` means unlimited                                                                              | `/app/uploads`, `0`, `.mp4,.avi,.mov,.mkv,.ts,.mxf,.webm`        |
+| `DB_POOL_SIZE`, `DB_MAX_OVERFLOW`, `DB_POOL_TIMEOUT_SECONDS`, `DB_POOL_RECYCLE_SECONDS` | PostgreSQL connection pool sizing                                                                                                      | `20`, `40`, `30`, `1800`                                         |
+| `CELERY_WORKER_CONCURRENCY`                                                             | Parallel worker threads per `celery_worker` container                                                                                  | `8`                                                              |
+| `CELERY_TASK_SOFT_TIME_LIMIT_SECONDS` / `CELERY_TASK_TIME_LIMIT_SECONDS`                | Ceiling for a single video-processing job                                                                                              | `21600` (6h) / `23400` (6.5h)                                    |
+| `UVICORN_WORKERS`                                                                       | API process count (separate from Celery concurrency)                                                                                   | `2`                                                              |
+| `FRAME_SAMPLE_RATE`                                                                     | Analyze every Nth frame                                                                                                                | `5`                                                              |
+| `LIVE_SESSION_MAX_SECONDS`                                                              | Max length of one live-camera task invocation before re-queuing                                                                        | `300`                                                            |
+| `YOLO_MODEL_PATH`                                                                       | YOLO weights (the job fails cleanly if these can't be loaded -- no synthetic fallback)                                                 | `yolo11m.pt`                                                     |
+| `INCIDENT_RISK_THRESHOLD`, `INCIDENT_CONSECUTIVE_REQUIRED`                              | Default rule thresholds                                                                                                                | `70.0`, `3`                                                      |
+| `VITE_API_BASE_URL`, `VITE_WS_BASE_URL`                                                 | Frontend → backend endpoints                                                                                                           | `http://localhost:8000`, `ws://localhost:8000`                   |
 
 ### Scaling for large deployments
 
@@ -651,7 +651,7 @@ deployment rather than a single local demo:
 
 - **Uploads are unbounded by default** (`MAX_UPLOAD_SIZE_MB=0`). The upload
   handler always streams straight to disk in 8MB chunks (`video_service.
-  save_upload`): it never buffers a file fully in memory, so there's no
+save_upload`): it never buffers a file fully in memory, so there's no
   practical ceiling besides the disk space backing the `uploads` volume.
   Raise/lower the cap per-deployment if you want one.
 - **An `nginx` reverse proxy** (`nginx/nginx.conf`) sits in front of the
@@ -770,12 +770,12 @@ curl -X PATCH localhost:8000/api/incidents/1/status -H "Authorization: Bearer <t
 
 ## CS50P requirement mapping
 
-| Requirement | Status |
-|---|---|
+| Requirement                                                   | Status                                                                                                      |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `project.py` in the root, with `main()` + 3+ custom functions | ✅ 4 functions: `calculate_risk`, `is_incident_triggered`, `calculate_motion_anomaly`, `split_video_chunks` |
-| `test_project.py` with tests for 3+ functions | ✅ 17 tests, covering all four functions plus edge/invalid cases |
-| `requirements.txt` | ✅ in the repo root |
-| `README.md`, 500+ words | ✅ (this file) |
+| `test_project.py` with tests for 3+ functions                 | ✅ 17 tests, covering all four functions plus edge/invalid cases                                            |
+| `requirements.txt`                                            | ✅ in the repo root                                                                                         |
+| `README.md`, 500+ words                                       | ✅ (this file)                                                                                              |
 
 ## Known limitations
 
@@ -856,8 +856,8 @@ just a demo:
   `associate_weapons_to_people`): a weapon-class track within
   `WEAPON_PERSON_ASSOCIATION_MAX_DISTANCE_RATIO` (default 25%) of the frame
   diagonal of an active person track is treated as held by that person --
-  narrated by name (*"Person #3 appears to be holding a knife (track
-  #5)"*) and immediately raised as a **CRITICAL** incident with a real-time
+  narrated by name (_"Person #3 appears to be holding a knife (track
+  #5)"_) and immediately raised as a **CRITICAL** incident with a real-time
   alert, independent of any zone/rule configuration. A weapon next to a
   person is inherently worth surfacing immediately, not gated behind
   dwell-time or a configured zone.
@@ -938,7 +938,7 @@ database rather than just reading the code:
   job via `Promise.all`, one HTTP request per camera, purely to render a
   status dot. `GET /api/cameras` now returns each camera's
   `latest_job_status` inline, computed server-side with a `ROW_NUMBER()
-  OVER (PARTITION BY camera_id ...)` window query -- 2 queries total
+OVER (PARTITION BY camera_id ...)` window query -- 2 queries total
   regardless of camera count or how many historical job rows each camera
   has accumulated (a live camera re-queues a new job row roughly every
   `LIVE_SESSION_MAX_SECONDS`, so that history grows unbounded over a
@@ -953,7 +953,7 @@ database rather than just reading the code:
 
 Not just slow -- `CameraDetail.tsx` and `VideoDetail.tsx` were showing the
 **wrong incidents**: both queried `/api/incidents` with no scoping filter
-at all, so each page displayed the 50 most recent incidents *system-wide*,
+at all, so each page displayed the 50 most recent incidents _system-wide_,
 indistinguishable from incidents actually tied to that camera or video
 once more than one of either existed. Fixed by wiring the already-
 existing `camera_id` filter into `CameraDetail.tsx`, and adding a new
@@ -1009,13 +1009,13 @@ stack before being considered done):
   supports them, and Pydantic doesn't reject them by default), which then
   reached Postgres and only crashed later when the success response tried
   to serialize it back (Starlette's `JSONResponse` enforces strict,
-  spec-compliant JSON) -- an unhandled 500 on a row that had *already
-  been persisted*. Fixed with `Field(allow_inf_nan=False)` so Pydantic
+  spec-compliant JSON) -- an unhandled 500 on a row that had _already
+  been persisted_. Fixed with `Field(allow_inf_nan=False)` so Pydantic
   itself rejects it before the handler runs. Separately, a field with a
   custom `@field_validator` (the zone polygon's `[0,1]` range check)
   already rejected the bad value correctly, but Pydantic v2 wraps a
   validator's raised `ValueError` as `ctx.error` holding the exception
-  *object*, which plain `json.dumps` can't encode -- reporting the
+  _object_, which plain `json.dumps` can't encode -- reporting the
   rejection crashed just as hard as accepting the bad value did
   elsewhere. Fixed with a `RequestValidationError` handler that
   recursively sanitizes the error payload before it's serialized.
