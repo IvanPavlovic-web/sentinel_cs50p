@@ -19,10 +19,6 @@ frontend/.vite/
 
 uploads/
 
-.agents/
-.claude/
-.impeccable/
-.taste-skill/
 docs/
 
 *.png

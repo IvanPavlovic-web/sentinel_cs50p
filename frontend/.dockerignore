@@ -1,6 +1,5 @@
 node_modules/
 dist/
 .vite/
-.impeccable/
 .env
 .env.local
